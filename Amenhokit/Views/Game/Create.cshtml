@@ -14,19 +14,11 @@
         <legend>Game</legend>
 
         <div class="editor-label">
-            @Html.LabelFor(model => model.PlayerID)
+            @Html.LabelFor(model => model.Lane)
         </div>
         <div class="editor-field">
-            @Html.EditorFor(model => model.PlayerID)
-            @Html.ValidationMessageFor(model => model.PlayerID)
-        </div>
-
-        <div class="editor-label">
-            @Html.LabelFor(model => model.TotalScore)
-        </div>
-        <div class="editor-field">
-            @Html.EditorFor(model => model.TotalScore)
-            @Html.ValidationMessageFor(model => model.TotalScore)
+            @Html.EditorFor(model => model.Lane)
+            @Html.ValidationMessageFor(model => model.Lane)
         </div>
 
         <div class="editor-label">

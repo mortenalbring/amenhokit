@@ -9,41 +9,35 @@ using Amenhokit.Models;
 
 namespace Amenhokit.Controllers
 {
-    public class PlayerController : Controller
+    public class PlayerGameController : Controller
     {
         private DataContext db = new DataContext();
 
-        public ActionResult GetPlayerList()
-        {
-            var allPlayers = db.Player.ToList();
 
-            return PartialView("PlayerList", allPlayers);
-
-        }
 
         //
-        // GET: /Player/
+        // GET: /PlayerGame/
 
         public ActionResult Index()
         {
-            return View(db.Player.ToList());
+            return View(db.PlayerGame.ToList());
         }
 
         //
-        // GET: /Player/Details/5
+        // GET: /PlayerGame/Details/5
 
         public ActionResult Details(int id = 0)
         {
-            Player player = db.Player.Find(id);
-            if (player == null)
+            PlayerGame playergame = db.PlayerGame.Find(id);
+            if (playergame == null)
             {
                 return HttpNotFound();
             }
-            return View(player);
+            return View(playergame);
         }
 
         //
-        // GET: /Player/Create
+        // GET: /PlayerGame/Create
 
         public ActionResult Create()
         {
@@ -51,73 +45,73 @@ namespace Amenhokit.Controllers
         }
 
         //
-        // POST: /Player/Create
+        // POST: /PlayerGame/Create
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Player player)
+        public ActionResult Create(PlayerGame playergame)
         {
             if (ModelState.IsValid)
             {
-                db.Player.Add(player);
+                db.PlayerGame.Add(playergame);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(player);
+            return View(playergame);
         }
 
         //
-        // GET: /Player/Edit/5
+        // GET: /PlayerGame/Edit/5
 
         public ActionResult Edit(int id = 0)
         {
-            Player player = db.Player.Find(id);
-            if (player == null)
+            PlayerGame playergame = db.PlayerGame.Find(id);
+            if (playergame == null)
             {
                 return HttpNotFound();
             }
-            return View(player);
+            return View(playergame);
         }
 
         //
-        // POST: /Player/Edit/5
+        // POST: /PlayerGame/Edit/5
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(Player player)
+        public ActionResult Edit(PlayerGame playergame)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(player).State = EntityState.Modified;
+                db.Entry(playergame).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(player);
+            return View(playergame);
         }
 
         //
-        // GET: /Player/Delete/5
+        // GET: /PlayerGame/Delete/5
 
         public ActionResult Delete(int id = 0)
         {
-            Player player = db.Player.Find(id);
-            if (player == null)
+            PlayerGame playergame = db.PlayerGame.Find(id);
+            if (playergame == null)
             {
                 return HttpNotFound();
             }
-            return View(player);
+            return View(playergame);
         }
 
         //
-        // POST: /Player/Delete/5
+        // POST: /PlayerGame/Delete/5
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Player player = db.Player.Find(id);
-            db.Player.Remove(player);
+            PlayerGame playergame = db.PlayerGame.Find(id);
+            db.PlayerGame.Remove(playergame);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

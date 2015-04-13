@@ -10,17 +10,10 @@
     <legend>Game</legend>
 
     <div class="display-label">
-         @Html.DisplayNameFor(model => model.PlayerID)
+         @Html.DisplayNameFor(model => model.Lane)
     </div>
     <div class="display-field">
-        @Html.DisplayFor(model => model.PlayerID)
-    </div>
-
-    <div class="display-label">
-         @Html.DisplayNameFor(model => model.TotalScore)
-    </div>
-    <div class="display-field">
-        @Html.DisplayFor(model => model.TotalScore)
+        @Html.DisplayFor(model => model.Lane)
     </div>
 
     <div class="display-label">
@@ -31,6 +24,6 @@
     </div>
 </fieldset>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { /* id=Model.PrimaryKey */ }) |
+    @Html.ActionLink("Edit", "Edit", new { id=Model.ID }) |
     @Html.ActionLink("Back to List", "Index")
 </p>

@@ -13,6 +13,14 @@ namespace Amenhokit.Controllers
     {
         private DataContext db = new DataContext();
 
+        public ActionResult GetGameList()
+        {
+            var allGames = db.Game.ToList();
+
+            return PartialView("GameList", allGames);
+        }
+
+
         //
         // GET: /Game/
 

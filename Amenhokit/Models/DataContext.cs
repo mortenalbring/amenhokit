@@ -14,5 +14,6 @@ namespace Amenhokit.Models
         }
         public DbSet<Player> Player { get; set; }
         public DbSet<Game> Game { get; set; }
+        public DbSet<PlayerGame> PlayerGame { get; set; }
     }
 }

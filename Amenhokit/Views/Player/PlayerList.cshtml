@@ -1,0 +1,13 @@
+﻿@model List<Amenhokit.Models.Player>
+           
+
+<table>
+    @foreach (var player in Model)
+    {
+        <tr>
+            <td>@player.ID</td>
+
+            <td>@player.Name</td>
+        </tr>
+    }
+</table>

@@ -1,0 +1,54 @@
+﻿@model Amenhokit.Models.PlayerGame
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit</h2>
+
+@using (Html.BeginForm()) {
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <legend>PlayerGame</legend>
+
+        @Html.HiddenFor(model => model.ID)
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.PlayerID)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.PlayerID)
+            @Html.ValidationMessageFor(model => model.PlayerID)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.GameID)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.GameID)
+            @Html.ValidationMessageFor(model => model.GameID)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.TotalScore)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.TotalScore)
+            @Html.ValidationMessageFor(model => model.TotalScore)
+        </div>
+
+        <p>
+            <input type="submit" value="Save" />
+        </p>
+    </fieldset>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

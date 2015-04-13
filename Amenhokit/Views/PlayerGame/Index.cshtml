@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Amenhokit.Models.Game>
+﻿@model IEnumerable<Amenhokit.Models.PlayerGame>
 
 @{
     ViewBag.Title = "Index";
@@ -12,10 +12,13 @@
 <table>
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Lane)
+            @Html.DisplayNameFor(model => model.PlayerID)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Date)
+            @Html.DisplayNameFor(model => model.GameID)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TotalScore)
         </th>
         <th></th>
     </tr>
@@ -23,10 +26,13 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.Lane)
+            @Html.DisplayFor(modelItem => item.PlayerID)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Date)
+            @Html.DisplayFor(modelItem => item.GameID)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.TotalScore)
         </td>
         <td>
             @Html.ActionLink("Edit", "Edit", new { id=item.ID }) |
@@ -35,5 +41,9 @@
         </td>
     </tr>
 }
+    
+@Html.Action("GetPlayerList","Player")
+@Html.Action("GetGameList", "Game")
+
 
 </table>

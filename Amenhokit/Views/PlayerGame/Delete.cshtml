@@ -1,4 +1,4 @@
-﻿@model Amenhokit.Models.Game
+﻿@model Amenhokit.Models.PlayerGame
 
 @{
     ViewBag.Title = "Delete";
@@ -8,20 +8,27 @@
 
 <h3>Are you sure you want to delete this?</h3>
 <fieldset>
-    <legend>Game</legend>
+    <legend>PlayerGame</legend>
 
     <div class="display-label">
-         @Html.DisplayNameFor(model => model.Lane)
+         @Html.DisplayNameFor(model => model.PlayerID)
     </div>
     <div class="display-field">
-        @Html.DisplayFor(model => model.Lane)
+        @Html.DisplayFor(model => model.PlayerID)
     </div>
 
     <div class="display-label">
-         @Html.DisplayNameFor(model => model.Date)
+         @Html.DisplayNameFor(model => model.GameID)
     </div>
     <div class="display-field">
-        @Html.DisplayFor(model => model.Date)
+        @Html.DisplayFor(model => model.GameID)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.TotalScore)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.TotalScore)
     </div>
 </fieldset>
 @using (Html.BeginForm()) {
