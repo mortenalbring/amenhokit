@@ -1,7 +1,17 @@
 ﻿@model List<Amenhokit.Models.Player>
            
 
-<table>
+<table class="table table-condensed table-striped">
+    <thead>
+        <tr>
+            <th>
+                Player ID
+            </th>
+            <th>
+                Name
+            </th>
+        </tr>
+    </thead>
     @foreach (var player in Model)
     {
         <tr>
