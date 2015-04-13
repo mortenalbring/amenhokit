@@ -1,4 +1,6 @@
-﻿var rawdata = [["29-Mar-12", 8], ["12-Apr-12", 4], ["19-Apr-12", 17], ["10-May-12", 3]];
+﻿var rawdata = [["25/02/2015 00:00:00", 8], ["02/04/2015 00:00:00", 4], ["05/03/2015 00:00:00", 17], ["05/03/2015 00:00:00", 3]];
+
+
 var data = [];
 // Set the dimensions of the canvas / graph
 var margin = { top: 30, right: 20, bottom: 30, left: 50 },
@@ -6,7 +8,7 @@ var margin = { top: 30, right: 20, bottom: 30, left: 50 },
     height = 270 - margin.top - margin.bottom;
 
 // Parse the date / time
-var parseDate = d3.time.format("%d-%b-%y").parse;
+var parseDate = d3.time.format("%x").parse;
 
 // Set the ranges
 var x = d3.time.scale().range([0, width]);
@@ -35,7 +37,14 @@ var svg = d3.select("body")
 
 rawdata.forEach(function(d) {
     var newDate = {};
-    newDate.date = parseDate(d[0]);
+
+    var day = d[0].substring(0, 2);
+    var month = d[0].substring(3, 5);
+    var year = d[0].substring(6, 10);
+    
+    var newdateString = month + "/" + day + "/" + year;
+
+    newDate.date = parseDate(newdateString);
     newDate.close = d[1];
 
     data.push(newDate);
