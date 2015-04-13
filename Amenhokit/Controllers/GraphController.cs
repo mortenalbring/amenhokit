@@ -15,12 +15,27 @@ namespace Amenhokit.Controllers
         //
         // GET: /Graph/
 
+        private static readonly long UnixEpochTicks = (new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).Ticks;
+
+        public static long? ToJsonTicks(DateTime? value)
+        {
+            return value == null ? (long?)null : (value.Value.ToUniversalTime().Ticks - UnixEpochTicks) / 10000;
+        }
+
+        public static long ToJsonTicks(DateTime value)
+        {
+            return (value.ToUniversalTime().Ticks - UnixEpochTicks) / 10000;
+        }
+
+
         public ActionResult Index()
         {
             using (var db = new DataContext())
             {
 
-                var players = db.Player.ToList();
+                var players = db.Player.Where(e => e.ID == 1).ToList();
+
+
                 var games = db.Game.ToList();
 
                 var viewmodel = new List<PlayerScore>();
@@ -36,8 +51,9 @@ namespace Amenhokit.Controllers
                         if (game != null)
                         {
                             var pscore = new PlayerScore
-                            {
-                                Date = game.Date,
+                            {                                
+                                Date = game.Date,                                
+                                DateString = game.Date.ToString(),
                                 Player = p,
                                 GameID = s.GameID,
                                 TotalScore = s.TotalScore

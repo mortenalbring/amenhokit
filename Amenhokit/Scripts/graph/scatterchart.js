@@ -1,5 +1,6 @@
 ﻿var rawdata = [["25/02/2015 00:00:00", 8], ["02/04/2015 00:00:00", 4], ["05/03/2015 00:00:00", 17], ["05/03/2015 00:00:00", 3]];
 
+var xx = modelData;
 
 var data = [];
 // Set the dimensions of the canvas / graph
@@ -35,6 +36,23 @@ var svg = d3.select("body")
         .attr("transform",
               "translate(" + margin.left + "," + margin.top + ")");
 
+
+modelData.forEach(function (d) {
+    var newDate = {};
+
+    var day = d.DateString.substring(0, 2);
+    var month = d.DateString.substring(3, 5);
+    var year = d.DateString.substring(6, 10);
+
+    var newdateString = month + "/" + day + "/" + year;
+
+    newDate.date = parseDate(newdateString);
+    newDate.close = d.TotalScore;
+
+    data.push(newDate);
+
+});
+
 rawdata.forEach(function(d) {
     var newDate = {};
 
@@ -47,7 +65,7 @@ rawdata.forEach(function(d) {
     newDate.date = parseDate(newdateString);
     newDate.close = d[1];
 
-    data.push(newDate);
+  //  data.push(newDate);
 });
 
 var minDate = parseDate(rawdata[0][0]);

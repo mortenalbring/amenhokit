@@ -33,6 +33,10 @@
     <!-- /the chart goes here -->
 </div>
 
+<script>
+    var modelData = @Html.Raw(Json.Encode(Model));
+</script>
+
 <script src="~/Scripts/graph/scatterchart.js"></script>
 
 @foreach (var m in Model)

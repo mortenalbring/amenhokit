@@ -7,7 +7,8 @@ namespace Amenhokit.Models.ViewModel
 {
     public class PlayerScore
     {
-        public DateTime Date { get; set; }
+        public DateTime Date { get; set; }        
+        public string DateString { get; set; }
         public Player Player { get; set; }
         public int GameID { get; set; }
         public int TotalScore { get; set; }
