@@ -197,6 +197,7 @@
     <Compile Include="Models\Game.cs" />
     <Compile Include="Models\Player.cs" />
     <Compile Include="Models\PlayerGame.cs" />
+    <Compile Include="Models\ViewModel\PlayerScore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

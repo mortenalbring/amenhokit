@@ -1,5 +1,11 @@
-﻿@{
-    ViewBag.Title = "title";
+﻿@model System.Collections.Generic.List<Amenhokit.Models.ViewModel.PlayerScore>
+
+@{
+    ViewBag.Title = "title";    
 }
 
-<h2>title</h2>
+
+@foreach (var m in Model)
+{
+    <span>@m.Date</span><span>@m.Player.Name</span><span>@m.TotalScore</span><br />
+}
