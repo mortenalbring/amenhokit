@@ -1,0 +1,36 @@
+﻿@model Amenhokit.Models.Game
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<fieldset>
+    <legend>Game</legend>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.PlayerID)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.PlayerID)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.TotalScore)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.TotalScore)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Date)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Date)
+    </div>
+</fieldset>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { /* id=Model.PrimaryKey */ }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
