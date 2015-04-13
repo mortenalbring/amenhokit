@@ -11,31 +11,47 @@ namespace Amenhokit.Controllers
     public class GraphController : Controller
     {
 
-        private DataContext db = new DataContext();
+       // private DataContext db = new DataContext();
         //
         // GET: /Graph/
 
         public ActionResult Index()
         {
-            var players = db.Player.ToList();
-
-            var viewmodel = new List<PlayerScore>();
-
-            foreach (var p in players)
+            using (var db = new DataContext())
             {
-                var scores = db.PlayerGame.Where(e => e.PlayerID == p.ID);
 
-                foreach (var s in scores)
+                var players = db.Player.ToList();
+                var games = db.Game.ToList();
+
+                var viewmodel = new List<PlayerScore>();
+
+                foreach (var p in players)
                 {
-                    var pscore = new PlayerScore {Player = p, GameID = s.GameID, TotalScore = s.TotalScore};
+                    var scores = db.PlayerGame.Where(e => e.PlayerID == p.ID);
 
-                    viewmodel.Add(pscore);
+                    foreach (var s in scores)
+                    {
+                        var game = games.FirstOrDefault(e => e.ID == s.GameID);
+
+                        if (game != null)
+                        {
+                            var pscore = new PlayerScore
+                            {
+                                Date = game.Date,
+                                Player = p,
+                                GameID = s.GameID,
+                                TotalScore = s.TotalScore
+                            };
+
+                            viewmodel.Add(pscore);
+                        }
+                    }
+
                 }
 
+
+                return View(viewmodel);
             }
-
-
-            return View(viewmodel);
         }
 
     }

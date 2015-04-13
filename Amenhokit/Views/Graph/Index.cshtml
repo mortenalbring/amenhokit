@@ -4,6 +4,36 @@
     ViewBag.Title = "title";    
 }
 
+@Scripts.Render("~/bundles/d3")
+
+<style>
+    /* set the CSS */
+
+    body {
+        font: 12px Arial;
+    }
+
+    path {
+        stroke: steelblue;
+        stroke-width: 2;
+        fill: none;
+    }
+
+    .axis path,
+    .axis line {
+        fill: none;
+        stroke: grey;
+        stroke-width: 1;
+        shape-rendering: crispEdges;
+    }
+</style>
+
+
+<div class='content'>
+    <!-- /the chart goes here -->
+</div>
+
+<script src="~/Scripts/graph/scatterchart.js"></script>
 
 @foreach (var m in Model)
 {
