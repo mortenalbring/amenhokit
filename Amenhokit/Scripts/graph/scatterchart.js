@@ -87,6 +87,31 @@ var Graph = function () {
 
     }
 }
+$(function() {
+
+    $.ajax({
+        url: "/Graph/PlayerScoreData/1",
+        success: function (data) {
+            
+
+            var deserialisedData = JSON.parse(data);
+
+            var xx = 42;
+
+            var graph2 = new Graph();
+            graph2.processData(deserialisedData);
+            graph2.plot();
+
+
+        },
+        error: function(what) {
+            var xxx = 42;
+        }
+    });
+
+
+});
+
 
 var graph1 = new Graph();
 

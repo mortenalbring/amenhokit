@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Script.Serialization;
 using Amenhokit.Models;
 using Amenhokit.Models.ViewModel;
 
@@ -11,7 +12,7 @@ namespace Amenhokit.Controllers
     public class GraphController : Controller
     {
 
-       // private DataContext db = new DataContext();
+        // private DataContext db = new DataContext();
         //
         // GET: /Graph/
 
@@ -27,6 +28,47 @@ namespace Amenhokit.Controllers
             return (value.ToUniversalTime().Ticks - UnixEpochTicks) / 10000;
         }
 
+
+        public string PlayerScoreData(int ID)
+        {
+            using (var db = new DataContext())
+            {
+                var player = db.Player.FirstOrDefault(e => e.ID == ID);
+                var games = db.Game.ToList();
+
+                var viewmodel = new List<PlayerScore>();
+
+                var scores = db.PlayerGame.Where(e => e.PlayerID == player.ID);
+
+                foreach (var s in scores)
+                {
+                    var game = games.FirstOrDefault(e => e.ID == s.GameID);
+
+                    if (game != null)
+                    {
+                        var pscore = new PlayerScore
+                        {
+                            Date = game.Date,
+                            DateString = game.Date.ToString(),
+                            Player = player,
+                            GameID = s.GameID,
+                            TotalScore = s.TotalScore
+                        };
+
+                        viewmodel.Add(pscore);
+                    }
+
+
+                }
+
+                JavaScriptSerializer js = new JavaScriptSerializer();
+
+                var c = js.Serialize(viewmodel);
+
+                return c;
+            }
+
+        }
 
         public ActionResult Index()
         {
@@ -51,8 +93,8 @@ namespace Amenhokit.Controllers
                         if (game != null)
                         {
                             var pscore = new PlayerScore
-                            {                                
-                                Date = game.Date,                                
+                            {
+                                Date = game.Date,
                                 DateString = game.Date.ToString(),
                                 Player = p,
                                 GameID = s.GameID,
