@@ -29,6 +29,19 @@ namespace Amenhokit.Controllers
         }
 
 
+        public string GetPlayers()
+        {
+            using (var db = new DataContext())
+            {
+                var players = db.Player.ToList();
+
+                JavaScriptSerializer js = new JavaScriptSerializer();
+                var c = js.Serialize(players);
+
+                return c;
+            }                                      
+        }
+
         public string PlayerScoreData(int ID)
         {
             using (var db = new DataContext())
