@@ -13,8 +13,11 @@ var Graph = function () {
 
             var newdateString = month + "/" + day + "/" + year;
 
+            newDate.dateString = year + '/' + month + '/' + day;
             newDate.date = parseDate(newdateString);
-            newDate.close = d.TotalScore;
+            newDate.totalScore = d.TotalScore;
+            newDate.gameID = d.GameID;
+            newDate.player = d.Player;
 
             data.push(newDate);
         });
@@ -34,16 +37,16 @@ var Graph = function () {
     var y = d3.scale.linear().range([height, 0]);
 
     // Define the axes
-    var xAxis = d3.svg.axis().scale(x)
+    this.xAxis = d3.svg.axis().scale(x)
         .orient("bottom").ticks(5);
 
-    var yAxis = d3.svg.axis().scale(y)
+    this.yAxis = d3.svg.axis().scale(y)
         .orient("left").ticks(5);
 
     // Define the line
     var valueline = d3.svg.line()
         .x(function (d) { return x(d.date); })
-        .y(function (d) { return y(d.close); });
+        .y(function (d) { return y(d.totalScore); });
 
 
     this.addTitle = function(title) {
@@ -69,33 +72,56 @@ var Graph = function () {
     this.plot = function() {      
         // Scale the range of the data
         x.domain(d3.extent(data, function (d) { return d.date; }));
-        y.domain([0, d3.max(data, function (d) { return d.close; })]);
+        y.domain([0, d3.max(data, function (d) { return d.totalScore; })]);
 
 
-
+        /*
+         * 
+         
         // Add the valueline path.
         this.svg.append("path")
             .attr("class", "line")
             .attr("d", valueline(data));
 
+            */
+
         // Add the scatterplot
         this.svg.selectAll("dot")
             .data(data)
-          .enter().append("circle")
-            .attr("r", 3.5)
-            .attr("cx", function (d) { return x(d.date); })
-            .attr("cy", function (d) { return y(d.close); });
+            .enter().append("circle")
+            .attr("r", 5.5)
+            .attr("cx", function(d) { return x(d.date); })
+            .attr("cy", function(d) { return y(d.totalScore); });
+
+        this.svg.selectAll("circle")
+            .data(data)
+            .append("svg:title")
+            .text(function (d) { return d.totalScore; });
+
+        $('svg circle').tipsy({
+            gravity: 'w',
+            html: true,
+            title: function() {
+                var d = this.__data__;
+                return '<span>Date: ' + d.dateString + '</span>' +
+                    '<br><span>Score:' + d.totalScore + '</span><br>' +
+                    '<span>Game ID:' + d.gameID + '</span>';
+            }
+
+        })
+
+
 
         // Add the X Axis
         this.svg.append("g")
             .attr("class", "x axis")
             .attr("transform", "translate(0," + height + ")")
-            .call(xAxis);
+            .call(this.xAxis);
 
         // Add the Y Axis
         this.svg.append("g")
             .attr("class", "y axis")
-            .call(yAxis);
+            .call(this.yAxis);
 
     }
 }

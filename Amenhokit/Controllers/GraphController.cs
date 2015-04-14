@@ -51,7 +51,7 @@ namespace Amenhokit.Controllers
 
                 var viewmodel = new List<PlayerScore>();
 
-                var scores = db.PlayerGame.Where(e => e.PlayerID == player.ID).OrderBy(e => e.GameID);
+                var scores = db.PlayerGame.Where(e => e.PlayerID == player.ID);
 
                 foreach (var s in scores)
                 {
@@ -76,7 +76,7 @@ namespace Amenhokit.Controllers
 
                 JavaScriptSerializer js = new JavaScriptSerializer();
 
-                var c = js.Serialize(viewmodel);
+                var c = js.Serialize(viewmodel.OrderBy(e => e.Date).ToList());
 
                 return c;
             }
