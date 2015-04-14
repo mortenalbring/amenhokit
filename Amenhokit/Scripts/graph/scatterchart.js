@@ -122,8 +122,7 @@ $(function() {
                         graph2.processData(deserialisedData);
                         graph2.plot();
 
-                        graph2.addTitle(deserialisedData[0].Player.Name)
-                        
+                        graph2.addTitle(deserialisedData[0].Player.Name);
 
 
                     },
