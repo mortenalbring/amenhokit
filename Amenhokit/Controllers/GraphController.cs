@@ -51,7 +51,7 @@ namespace Amenhokit.Controllers
 
                 var viewmodel = new List<PlayerScore>();
 
-                var scores = db.PlayerGame.Where(e => e.PlayerID == player.ID);
+                var scores = db.PlayerGame.Where(e => e.PlayerID == player.ID).OrderBy(e => e.GameID);
 
                 foreach (var s in scores)
                 {

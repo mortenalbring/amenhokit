@@ -46,15 +46,27 @@ var Graph = function () {
         .y(function (d) { return y(d.close); });
 
 
-    this.plot = function() {
-        // Adds the svg canvas
-        var svg = d3.select("body")
-            .append("svg")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom)
-            .append("g")
-                .attr("transform",
-                      "translate(" + margin.left + "," + margin.top + ")");
+    this.addTitle = function(title) {
+        this.svg.append("text")
+        .attr("x", (width / 2))
+        .attr("y", 0 - (margin.top / 2))
+        .attr("text-anchor", "middle")
+        .style("font-size", "16px")
+        .style("text-decoration", "underline")
+        .text(title);
+
+
+    }
+
+    this.svg = d3.select("body")
+           .append("svg")
+               .attr("width", width + margin.left + margin.right)
+               .attr("height", height + margin.top + margin.bottom)
+           .append("g")
+               .attr("transform",
+                     "translate(" + margin.left + "," + margin.top + ")");
+
+    this.plot = function() {      
         // Scale the range of the data
         x.domain(d3.extent(data, function (d) { return d.date; }));
         y.domain([0, d3.max(data, function (d) { return d.close; })]);
@@ -62,12 +74,12 @@ var Graph = function () {
 
 
         // Add the valueline path.
-        svg.append("path")
+        this.svg.append("path")
             .attr("class", "line")
             .attr("d", valueline(data));
 
         // Add the scatterplot
-        svg.selectAll("dot")
+        this.svg.selectAll("dot")
             .data(data)
           .enter().append("circle")
             .attr("r", 3.5)
@@ -75,13 +87,13 @@ var Graph = function () {
             .attr("cy", function (d) { return y(d.close); });
 
         // Add the X Axis
-        svg.append("g")
+        this.svg.append("g")
             .attr("class", "x axis")
             .attr("transform", "translate(0," + height + ")")
             .call(xAxis);
 
         // Add the Y Axis
-        svg.append("g")
+        this.svg.append("g")
             .attr("class", "y axis")
             .call(yAxis);
 
@@ -110,6 +122,9 @@ $(function() {
                         graph2.processData(deserialisedData);
                         graph2.plot();
 
+                        graph2.addTitle(deserialisedData[0].Player.Name)
+                        
+
 
                     },
                     error: function (what) {
@@ -129,9 +144,3 @@ $(function() {
  
 
 });
-
-
-var graph1 = new Graph();
-
-graph1.processData(modelData);
-graph1.plot();
