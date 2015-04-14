@@ -5,10 +5,9 @@
 }
 
 @Scripts.Render("~/bundles/d3")
-
+<link href="~/Content/tipsy.css" rel="stylesheet" />
 <style>
     /* set the CSS */
-
     body {
         font: 12px Arial;
     }
@@ -37,6 +36,8 @@
     var modelData = @Html.Raw(Json.Encode(Model));
 </script>
 
+
+<script src="~/Scripts/d3/jquery.tipsy.js"></script>
 <script src="~/Scripts/graph/scatterchart.js"></script>
 
 @foreach (var m in Model)

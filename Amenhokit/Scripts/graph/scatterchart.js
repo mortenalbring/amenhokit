@@ -81,10 +81,17 @@ var Graph = function () {
         // Add the scatterplot
         this.svg.selectAll("dot")
             .data(data)
-          .enter().append("circle")
+            .enter().append("circle")
             .attr("r", 3.5)
-            .attr("cx", function (d) { return x(d.date); })
-            .attr("cy", function (d) { return y(d.close); });
+            .attr("cx", function(d) { return x(d.date); })
+            .attr("cy", function(d) { return y(d.close); });
+
+        this.svg.selectAll("circle")
+            .data(data)
+            .append("svg:title")
+            .text(function (d) { return d.close; });
+
+
 
         // Add the X Axis
         this.svg.append("g")
