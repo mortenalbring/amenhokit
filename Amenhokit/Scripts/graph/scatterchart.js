@@ -10,10 +10,12 @@ var Graph = function () {
             var day = d.DateString.substring(0, 2);
             var month = d.DateString.substring(3, 5);
             var year = d.DateString.substring(6, 10);
+            
+            var time = d.DateString.substring(11, 19);
 
-            var newdateString = month + "/" + day + "/" + year;
+            var newdateString = month + "/" + day + "/" + year + ' ' + time;
 
-            newDate.dateString = year + '/' + month + '/' + day;
+            newDate.dateString = year + '/' + month + '/' + day + ' ' + time;
             newDate.date = parseDate(newdateString);
             newDate.totalScore = d.TotalScore;
             newDate.gameID = d.GameID;
@@ -30,7 +32,7 @@ var Graph = function () {
         height = 270 - margin.top - margin.bottom;
 
     // Parse the date / time
-    var parseDate = d3.time.format("%x").parse;
+    var parseDate = d3.time.format("%x %X").parse;
 
     // Set the ranges
     var x = d3.time.scale().range([0, width]);

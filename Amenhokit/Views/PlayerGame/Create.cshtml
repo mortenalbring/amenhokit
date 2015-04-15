@@ -16,6 +16,23 @@
 
             <fieldset>
                 <legend>PlayerGame</legend>
+                
+                
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.GameID)
+                </div>
+                <div class="editor-field">
+                    @Html.EditorFor(model => model.GameID)
+                    @Html.ValidationMessageFor(model => model.GameID)
+                </div>
+                
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.GameNumber)
+                </div>
+                <div class="editor-field">
+                    @Html.EditorFor(model => model.GameNumber)
+                    @Html.ValidationMessageFor(model => model.GameNumber)
+                </div>
 
                 <div class="editor-label">
                     @Html.LabelFor(model => model.PlayerID)
@@ -25,13 +42,7 @@
                     @Html.ValidationMessageFor(model => model.PlayerID)
                 </div>
 
-                <div class="editor-label">
-                    @Html.LabelFor(model => model.GameID)
-                </div>
-                <div class="editor-field">
-                    @Html.EditorFor(model => model.GameID)
-                    @Html.ValidationMessageFor(model => model.GameID)
-                </div>
+      
 
                 <div class="editor-label">
                     @Html.LabelFor(model => model.TotalScore)

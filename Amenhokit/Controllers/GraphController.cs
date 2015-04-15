@@ -10,9 +10,7 @@ using Amenhokit.Models.ViewModel;
 namespace Amenhokit.Controllers
 {
     public class GraphController : Controller
-    {
-
-        // private DataContext db = new DataContext();
+    {        
         //
         // GET: /Graph/
 
@@ -27,7 +25,6 @@ namespace Amenhokit.Controllers
         {
             return (value.ToUniversalTime().Ticks - UnixEpochTicks) / 10000;
         }
-
 
         public string GetPlayers()
         {
@@ -57,21 +54,17 @@ namespace Amenhokit.Controllers
                 {
                     var game = games.FirstOrDefault(e => e.ID == s.GameID);
 
-                    if (game != null)
+                    if (game == null) continue;
+                    var pscore = new PlayerScore
                     {
-                        var pscore = new PlayerScore
-                        {
-                            Date = game.Date,
-                            DateString = game.Date.ToString(),
-                            Player = player,
-                            GameID = s.GameID,
-                            TotalScore = s.TotalScore
-                        };
+                        Date = game.ShiftedDate(s.GameNumber),
+                        DateString = game.ShiftedDate(s.GameNumber).ToString(),
+                        Player = player,
+                        GameID = s.GameID,
+                        TotalScore = s.TotalScore
+                    };
 
-                        viewmodel.Add(pscore);
-                    }
-
-
+                    viewmodel.Add(pscore);
                 }
 
                 JavaScriptSerializer js = new JavaScriptSerializer();
@@ -103,19 +96,17 @@ namespace Amenhokit.Controllers
                     {
                         var game = games.FirstOrDefault(e => e.ID == s.GameID);
 
-                        if (game != null)
+                        if (game == null) continue;
+                        var pscore = new PlayerScore
                         {
-                            var pscore = new PlayerScore
-                            {
-                                Date = game.Date,
-                                DateString = game.Date.ToString(),
-                                Player = p,
-                                GameID = s.GameID,
-                                TotalScore = s.TotalScore
-                            };
+                            Date = game.Date,
+                            DateString = game.Date.ToString(),
+                            Player = p,
+                            GameID = s.GameID,
+                            TotalScore = s.TotalScore
+                        };
 
-                            viewmodel.Add(pscore);
-                        }
+                        viewmodel.Add(pscore);
                     }
 
                 }
