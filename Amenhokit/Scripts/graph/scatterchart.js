@@ -1,9 +1,16 @@
 ﻿
 var Graph = function () {
 
-    var data = [];
+    this.data = [];
 
-    this.processData = function(rawData) {
+    this.processData = function (rawData) {
+
+        var series = {
+            Name: 'A',
+            Data: []
+
+        };
+
         rawData.forEach(function (d) {
             var newDate = {};
 
@@ -21,10 +28,15 @@ var Graph = function () {
             newDate.gameID = d.GameID;
             newDate.player = d.Player;
 
-            data.push(newDate);
+            series.Data.push(newDate);
         });
+        this.data.push(series);        
     }
 
+
+    var c10 = d3.scale.linear()
+    .domain([1, 7])
+    .range(["red","green","orange","blue","green","violet","indigo"]);
     
     // Set the dimensions of the canvas / graph
     var margin = { top: 30, right: 20, bottom: 30, left: 50 },
@@ -71,47 +83,67 @@ var Graph = function () {
                .attr("transform",
                      "translate(" + margin.left + "," + margin.top + ")");
 
-    this.plot = function() {      
-        // Scale the range of the data
-        x.domain(d3.extent(data, function (d) { return d.date; }));
-        y.domain([0, d3.max(data, function (d) { return d.totalScore; })]);
 
 
-        /*
-         * 
-         
-        // Add the valueline path.
-        this.svg.append("path")
-            .attr("class", "line")
-            .attr("d", valueline(data));
+  
 
-            */
+    this.plot = function () {        
 
-        // Add the scatterplot
-        this.svg.selectAll("dot")
-            .data(data)
-            .enter().append("circle")
-            .attr("r", 5.5)
+        // Scale the range of the data        
+        var xmin = d3.min(this.data, function (d) {
+            return d3.min(d.Data, function(s) {
+                return s.date;
+            });
+        });
+
+        var xmax = d3.max(this.data, function (d) {
+            return d3.max(d.Data, function (s) {
+
+                return s.date;
+
+            });
+        });                    
+        x.domain([xmin,xmax]);
+
+        
+        y.domain([0, d3.max(this.data, function (d) {
+
+            return d3.max(d.Data, function(s) {
+                return s.totalScore;
+
+            });            
+        })]);
+
+
+        var series = this.svg.selectAll("g")
+            .data(d3.map(this.data).entries())
+            .enter()
+            .append("g")
+            .attr("id", function(d) {
+
+                return "series-" + d.key;
+        });        
+
+        series.selectAll("circle")
+            .data(function (d) {                
+                return d.value.Data;
+            })
+            .enter()
+            .append("circle")
             .attr("cx", function(d) { return x(d.date); })
+            .attr("r", "10")
+            .attr("fill", function (d) {
+
+                
+
+                if (d.player.ID == 1) {
+                    var whatwhat = c10(d.player.ID);
+                } else {
+                    var blarg = c10(d.player.ID);
+                }
+                return c10(d.player.ID);
+            })
             .attr("cy", function(d) { return y(d.totalScore); });
-
-        this.svg.selectAll("circle")
-            .data(data)
-            .append("svg:title")
-            .text(function (d) { return d.totalScore; });
-
-        $('svg circle').tipsy({
-            gravity: 'w',
-            html: true,
-            title: function() {
-                var d = this.__data__;
-                return '<span>Date: ' + d.dateString + '</span>' +
-                    '<br><span>Score:' + d.totalScore + '</span><br>' +
-                    '<span>Game ID:' + d.gameID + '</span>';
-            }
-
-        })
-
 
 
         // Add the X Axis
@@ -124,6 +156,22 @@ var Graph = function () {
         this.svg.append("g")
             .attr("class", "y axis")
             .call(this.yAxis);
+       
+        $('svg circle').tipsy({
+            gravity: 'w',
+            html: true,
+            title: function() {
+                var d = this.__data__;
+                return '<span>Player:' + d.player.Name + ' (' + d.player.ID + ')</span><br>' +
+                    '<span>Date: ' + d.dateString + '</span><br>' +
+                    '<br><span>Score:' + d.totalScore + '</span><br>' +
+                    '<span>Game ID:' + d.gameID + '</span>';
+            }
+
+        })
+
+
+
 
     }
 }
@@ -136,17 +184,25 @@ $(function() {
 
             var xx = 42;
 
+
+            var ubergraph = new Graph();
+
+
             deserialisedData.forEach(function(d) {
                 $.ajax({
                     url: "/Graph/PlayerScoreData/" + d.ID,
                     success: function (data) {
 
 
-                        var deserialisedData = JSON.parse(data);
-
-                        var xx = 42;
+                        var deserialisedData = JSON.parse(data);                        
 
                         var graph2 = new Graph();
+
+                        ubergraph.processData(deserialisedData);
+                        ubergraph.plot();
+                        ubergraph.addTitle(deserialisedData[0].Player.Name);
+
+
                         graph2.processData(deserialisedData);
                         graph2.plot();
 
