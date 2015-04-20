@@ -1,5 +1,48 @@
 ﻿
 var Graph = function () {
+    //Initial graph setup
+
+    // Set the dimensions of the canvas / graph
+    var margin = { top: 30, right: 20, bottom: 30, left: 50 },
+        width = 600 - margin.left - margin.right,
+        height = 270 - margin.top - margin.bottom;
+
+    // Parse the date / time
+    var parseDate = d3.time.format("%x %X").parse;
+
+    // Set the ranges
+    var x = d3.time.scale().range([0, width]);
+    var y = d3.scale.linear().range([height, 0]);
+
+    // Define the axes
+    this.xAxis = d3.svg.axis().scale(x)
+        .orient("bottom").ticks(5);
+
+    this.yAxis = d3.svg.axis().scale(y)
+        .orient("left").ticks(5);
+
+    this.svg = d3.select(".content")
+           .append("svg")
+               .attr("width", width + margin.left + margin.right)
+               .attr("height", height + margin.top + margin.bottom)
+           .append("g")
+               .attr("transform",
+                     "translate(" + margin.left + "," + margin.top + ")");
+
+    this.addTitle = function (title) {
+        this.svg.append("text")
+        .attr("x", (width / 2))
+        .attr("y", 0 - (margin.top / 2))
+        .attr("text-anchor", "middle")
+        .style("font-size", "16px")
+        .style("text-decoration", "underline")
+        .text(title);
+
+
+    }
+
+
+
 
     this.data = [];
 
@@ -34,28 +77,38 @@ var Graph = function () {
     }
 
 
-    var c10 = d3.scale.linear()
-    .domain([1, 7])
-    .range(["red","green","orange","blue","green","violet","indigo"]);
+    var c10 = function(d) {
+        switch(d) {
+            case 1:
+                return "red";
+                break;
+            case 2:
+                return "GoldenRod";
+                break;
+            case 3:
+                return "purple";
+                break;
+            case 4:
+                return "metal";
+                break;
+            case 5:
+                return "green";
+                break;
+            case 6:
+                return "blue";
+                break;
+            case 7:
+                return "DodgerBlue";
+                break;
+                default:
+                    return "black";
+
+
+        }
     
-    // Set the dimensions of the canvas / graph
-    var margin = { top: 30, right: 20, bottom: 30, left: 50 },
-        width = 600 - margin.left - margin.right,
-        height = 270 - margin.top - margin.bottom;
-
-    // Parse the date / time
-    var parseDate = d3.time.format("%x %X").parse;
-
-    // Set the ranges
-    var x = d3.time.scale().range([0, width]);
-    var y = d3.scale.linear().range([height, 0]);
-
-    // Define the axes
-    this.xAxis = d3.svg.axis().scale(x)
-        .orient("bottom").ticks(5);
-
-    this.yAxis = d3.svg.axis().scale(y)
-        .orient("left").ticks(5);
+        
+    };
+    
 
     // Define the line
     var valueline = d3.svg.line()
@@ -63,25 +116,6 @@ var Graph = function () {
         .y(function (d) { return y(d.totalScore); });
 
 
-    this.addTitle = function(title) {
-        this.svg.append("text")
-        .attr("x", (width / 2))
-        .attr("y", 0 - (margin.top / 2))
-        .attr("text-anchor", "middle")
-        .style("font-size", "16px")
-        .style("text-decoration", "underline")
-        .text(title);
-
-
-    }
-
-    this.svg = d3.select("body")
-           .append("svg")
-               .attr("width", width + margin.left + margin.right)
-               .attr("height", height + margin.top + margin.bottom)
-           .append("g")
-               .attr("transform",
-                     "translate(" + margin.left + "," + margin.top + ")");
 
 
 
@@ -131,7 +165,7 @@ var Graph = function () {
             .enter()
             .append("circle")
             .attr("cx", function(d) { return x(d.date); })
-            .attr("r", "10")
+            .attr("r", "5")
             .attr("fill", function (d) {
 
                 
@@ -156,7 +190,7 @@ var Graph = function () {
         this.svg.append("g")
             .attr("class", "y axis")
             .call(this.yAxis);
-       
+
         $('svg circle').tipsy({
             gravity: 'w',
             html: true,
@@ -168,14 +202,21 @@ var Graph = function () {
                     '<span>Game ID:' + d.gameID + '</span>';
             }
 
-        })
-
-
-
-
+        });
     }
 }
-$(function() {
+
+var ubergraph;
+
+
+$(function () {
+
+    $('#plotstuff').click(function () {
+
+        var xx = 42;
+        ubergraph.plot();
+    });
+
 
     $.ajax({
         url: "/Graph/GetPlayers/",
@@ -185,7 +226,7 @@ $(function() {
             var xx = 42;
 
 
-            var ubergraph = new Graph();
+            ubergraph = new Graph();
 
 
             deserialisedData.forEach(function(d) {
@@ -199,7 +240,7 @@ $(function() {
                         var graph2 = new Graph();
 
                         ubergraph.processData(deserialisedData);
-                        ubergraph.plot();
+                        
                         ubergraph.addTitle(deserialisedData[0].Player.Name);
 
 
