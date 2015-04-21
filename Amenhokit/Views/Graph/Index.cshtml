@@ -1,7 +1,7 @@
 ﻿@model System.Collections.Generic.List<Amenhokit.Models.ViewModel.PlayerScore>
 
 @{
-    ViewBag.Title = "title";    
+    ViewBag.Title = "title";
 }
 
 @Scripts.Render("~/bundles/d3")
@@ -25,8 +25,21 @@
         stroke-width: 1;
         shape-rendering: crispEdges;
     }
-</style>
 
+    .legend {
+        padding: 5px;
+        font: 10px sans-serif;
+        border: 1px solid;
+        border-color: #888;
+        box-shadow: 2px 2px 1px #888;
+    }
+    .graph {
+        background: #fff;
+        border: 1px solid;
+        border-color: #000;
+        margin: 10px;
+    }
+</style>
 
 <div class='content'>
     <!-- /the chart goes here -->
@@ -39,8 +52,12 @@
 
 <script src="~/Scripts/d3/jquery.tipsy.js"></script>
 <script src="~/Scripts/graph/scatterchart.js"></script>
+<script src="~/Scripts/graph/main.js"></script>
+
 
 @foreach (var m in Model)
 {
     <span>@m.Date</span><span>@m.Player.Name</span><span>@m.TotalScore</span><br />
 }
+
+

@@ -1,34 +1,10 @@
 ﻿
 var Graph = function () {
+    //Initial graph setup
 
-    var data = [];
-
-    this.processData = function(rawData) {
-        rawData.forEach(function (d) {
-            var newDate = {};
-
-            var day = d.DateString.substring(0, 2);
-            var month = d.DateString.substring(3, 5);
-            var year = d.DateString.substring(6, 10);
-            
-            var time = d.DateString.substring(11, 19);
-
-            var newdateString = month + "/" + day + "/" + year + ' ' + time;
-
-            newDate.dateString = year + '/' + month + '/' + day + ' ' + time;
-            newDate.date = parseDate(newdateString);
-            newDate.totalScore = d.TotalScore;
-            newDate.gameID = d.GameID;
-            newDate.player = d.Player;
-
-            data.push(newDate);
-        });
-    }
-
-    
     // Set the dimensions of the canvas / graph
-    var margin = { top: 30, right: 20, bottom: 30, left: 50 },
-        width = 600 - margin.left - margin.right,
+    var margin = { top: 30, right: 150, bottom: 30, left: 50 },
+        width = 800 - margin.left - margin.right,
         height = 270 - margin.top - margin.bottom;
 
     // Parse the date / time
@@ -42,16 +18,28 @@ var Graph = function () {
     this.xAxis = d3.svg.axis().scale(x)
         .orient("bottom").ticks(5);
 
+    //For the 'All Players' graph, it makes sense to use 
+    //.ticks(d3.time.week,2)
+    //But not for all of the individual graphs Using automatic tick generator for now. 
+
     this.yAxis = d3.svg.axis().scale(y)
         .orient("left").ticks(5);
 
-    // Define the line
-    var valueline = d3.svg.line()
-        .x(function (d) { return x(d.date); })
-        .y(function (d) { return y(d.totalScore); });
+    // Draws the actual graph body
+    this.svg = d3.select(".content")
+           .append("svg")
+               .attr("width", width + margin.left + margin.right)
+               .attr("height", height + margin.top + margin.bottom)
+        .attr("class", "graph")
+           .append("g")
+               .attr("transform",
+                     "translate(" + margin.left + "," + margin.top + ")");
 
-
-    this.addTitle = function(title) {
+    this.addTitle = function (title) {
+        /// <summary>
+        /// Adds a title to the graph
+        /// </summary>
+        /// <param name="title">Title text</param>
         this.svg.append("text")
         .attr("x", (width / 2))
         .attr("y", 0 - (margin.top / 2))
@@ -59,59 +47,172 @@ var Graph = function () {
         .style("font-size", "16px")
         .style("text-decoration", "underline")
         .text(title);
+    }
+
+
+    var c10 = function (d) {
+        /// <summary>
+        /// Switch case for defining colors
+        /// </summary>
+        /// <param name="d">Player ID</param>
+        switch (d) {
+            case 1:
+                return "red";
+                break;
+            case 2:
+                return "GoldenRod";
+                break;
+            case 3:
+                return "purple";
+                break;
+            case 4:
+                return "metal";
+                break;
+            case 5:
+                return "green";
+                break;
+            case 6:
+                return "blue";
+                break;
+            case 7:
+                return "DodgerBlue";
+                break;
+            default:
+                return "black";
+        }
+    };
+
+
+    this.data = [];
+    this.processData = function (rawData, player) {
+
+        var series = {
+            Player: player,
+            Data: []
+
+        };
+
+        rawData.forEach(function (d) {
+            var newDate = {};
+
+            var day = d.DateString.substring(0, 2);
+            var month = d.DateString.substring(3, 5);
+            var year = d.DateString.substring(6, 10);
+
+            var time = d.DateString.substring(11, 19);
+
+            var newdateString = month + "/" + day + "/" + year + ' ' + time;
+
+            newDate.dateString = year + '/' + month + '/' + day + ' ' + time;
+            newDate.date = parseDate(newdateString);
+            newDate.totalScore = d.TotalScore;
+            newDate.gameID = d.GameID;
+            newDate.player = d.Player;
+
+            series.Data.push(newDate);
+        });
+        this.data.push(series);
 
 
     }
 
-    this.svg = d3.select("body")
-           .append("svg")
-               .attr("width", width + margin.left + margin.right)
-               .attr("height", height + margin.top + margin.bottom)
-           .append("g")
-               .attr("transform",
-                     "translate(" + margin.left + "," + margin.top + ")");
-
-    this.plot = function() {      
-        // Scale the range of the data
-        x.domain(d3.extent(data, function (d) { return d.date; }));
-        y.domain([0, d3.max(data, function (d) { return d.totalScore; })]);
 
 
-        /*
-         * 
-         
-        // Add the valueline path.
-        this.svg.append("path")
-            .attr("class", "line")
-            .attr("d", valueline(data));
 
-            */
+    // Define the line
+    var valueline = d3.svg.line()
+        .x(function (d) { return x(d.date); })
+        .y(function (d) { return y(d.totalScore); });
 
-        // Add the scatterplot
-        this.svg.selectAll("dot")
-            .data(data)
-            .enter().append("circle")
-            .attr("r", 5.5)
-            .attr("cx", function(d) { return x(d.date); })
-            .attr("cy", function(d) { return y(d.totalScore); });
 
-        this.svg.selectAll("circle")
-            .data(data)
-            .append("svg:title")
-            .text(function (d) { return d.totalScore; });
 
-        $('svg circle').tipsy({
-            gravity: 'w',
-            html: true,
-            title: function() {
-                var d = this.__data__;
-                return '<span>Date: ' + d.dateString + '</span>' +
-                    '<br><span>Score:' + d.totalScore + '</span><br>' +
-                    '<span>Game ID:' + d.gameID + '</span>';
-            }
 
-        })
+    this.addLegend = function () {
+        /// <summary>
+        /// Adds a legend displaying colored squared and series name
+        /// </summary>
 
+        var legend = this.svg.append("g")
+
+    .attr("height", 100)
+    .attr("width", 100)
+            .attr("class", "legend")
+    .attr("transform", 'translate(-20,50');
+
+        legend.selectAll('rect')
+            .data(this.data)
+            .enter()
+            .append("rect")
+            
+            .attr("x", width + 60)
+            .attr("y", function (d, i) { return i * 20; })
+            .attr("width", 10)
+            .attr("height", 10)
+            .style("fill", function (d) {
+                return c10(d.Player.ID);
+            });
+
+        legend.selectAll('text')
+            .data(this.data)
+            .enter()
+            .append("text")
+            .attr("x", width + 75)
+            .attr("y", function (d, i) { return i * 20 + 9; })
+            .text(function (d) {
+                return d.Player.Name;
+            });
+    }
+
+
+
+    this.plot = function () {
+
+        // Scale the range of the data        
+        var xmin = d3.min(this.data, function (d) {
+            return d3.min(d.Data, function (s) {
+                return s.date;
+            });
+        });
+
+        var xmax = d3.max(this.data, function (d) {
+            return d3.max(d.Data, function (s) {
+
+                return s.date;
+
+            });
+        });
+        x.domain([xmin, xmax]).nice();
+
+
+        y.domain([0, d3.max(this.data, function (d) {
+
+            return d3.max(d.Data, function (s) {
+                return s.totalScore;
+
+            });
+        })]).nice();
+
+
+        var series = this.svg.selectAll("g")
+            .data(d3.map(this.data).entries())
+            .enter()
+            .append("g")
+            .attr("id", function (d) {
+                return "series-" + d.key;
+            });
+
+        series.selectAll("circle")
+            .data(function (d) {
+                return d.value.Data;
+            })
+            .enter()
+            .append("circle")
+            .attr("cx", function (d) { return x(d.date); })
+            .attr("r", "5")
+            .attr("fill", function (d) {
+                return c10(d.player.ID);
+            })
+            .attr("cy", function (d) { return y(d.totalScore); });
 
 
         // Add the X Axis
@@ -125,49 +226,24 @@ var Graph = function () {
             .attr("class", "y axis")
             .call(this.yAxis);
 
+
+
+        // Adds the hoverover text
+        $('svg circle').tipsy({
+            gravity: 'w',
+            html: true,
+            title: function () {
+                var d = this.__data__;
+                return '<span>Player:' + d.player.Name + ' (' + d.player.ID + ')</span><br>' +
+                    '<span>Date: ' + d.dateString + '</span><br>' +
+                    '<br><span>Score:' + d.totalScore + '</span><br>' +
+                    '<span>Game ID:' + d.gameID + '</span>';
+            }
+        });
+
+        this.addLegend();
     }
 }
-$(function() {
-
-    $.ajax({
-        url: "/Graph/GetPlayers/",
-        success: function(data) {
-            var deserialisedData = JSON.parse(data);
-
-            var xx = 42;
-
-            deserialisedData.forEach(function(d) {
-                $.ajax({
-                    url: "/Graph/PlayerScoreData/" + d.ID,
-                    success: function (data) {
 
 
-                        var deserialisedData = JSON.parse(data);
 
-                        var xx = 42;
-
-                        var graph2 = new Graph();
-                        graph2.processData(deserialisedData);
-                        graph2.plot();
-
-                        graph2.addTitle(deserialisedData[0].Player.Name);
-
-
-                    },
-                    error: function (what) {
-                        var xxx = 42;
-                    }
-                });
-
-            })
-
-        
-
-
-        }
-
-    });
-
- 
-
-});
