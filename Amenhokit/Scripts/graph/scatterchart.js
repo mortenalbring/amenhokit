@@ -3,7 +3,7 @@ var Graph = function () {
     //Initial graph setup
 
     // Set the dimensions of the canvas / graph
-    var margin = { top: 30, right: 200, bottom: 30, left: 50 },
+    var margin = { top: 30, right: 150, bottom: 30, left: 50 },
         width = 800 - margin.left - margin.right,
         height = 270 - margin.top - margin.bottom;
 
@@ -16,7 +16,11 @@ var Graph = function () {
 
     // Define the axes
     this.xAxis = d3.svg.axis().scale(x)
-        .orient("bottom").ticks(6);
+        .orient("bottom").ticks(5);
+
+    //For the 'All Players' graph, it makes sense to use 
+    //.ticks(d3.time.week,2)
+    //But not for all of the individual graphs Using automatic tick generator for now. 
 
     this.yAxis = d3.svg.axis().scale(y)
         .orient("left").ticks(5);
@@ -140,7 +144,7 @@ var Graph = function () {
             .enter()
             .append("rect")
             
-            .attr("x", width + 90)
+            .attr("x", width + 60)
             .attr("y", function (d, i) { return i * 20; })
             .attr("width", 10)
             .attr("height", 10)
@@ -152,7 +156,7 @@ var Graph = function () {
             .data(this.data)
             .enter()
             .append("text")
-            .attr("x", width + 105)
+            .attr("x", width + 75)
             .attr("y", function (d, i) { return i * 20 + 9; })
             .text(function (d) {
                 return d.Player.Name;
