@@ -77,6 +77,12 @@ var Graph = function () {
             case 7:
                 return "DodgerBlue";
                 break;
+            case 8:
+                return "Chocolate";
+                break;
+            case 9:
+                return "DarkKhaki";
+                break;
             default:
                 return "black";
         }
@@ -143,7 +149,7 @@ var Graph = function () {
             .data(this.data)
             .enter()
             .append("rect")
-            
+
             .attr("x", width + 60)
             .attr("y", function (d, i) { return i * 20; })
             .attr("width", 10)
@@ -165,7 +171,11 @@ var Graph = function () {
 
 
 
-    this.plot = function () {
+    this.plot = function (circleSize) {
+
+        if (circleSize == null) {
+            circleSize = 4;
+        }
 
         // Scale the range of the data        
         var xmin = d3.min(this.data, function (d) {
@@ -208,7 +218,7 @@ var Graph = function () {
             .enter()
             .append("circle")
             .attr("cx", function (d) { return x(d.date); })
-            .attr("r", "5")
+            .attr("r", circleSize)
             .attr("fill", function (d) {
                 return c10(d.player.ID);
             })

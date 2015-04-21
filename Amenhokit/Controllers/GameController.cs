@@ -26,7 +26,7 @@ namespace Amenhokit.Controllers
 
         public ActionResult Index()
         {
-            return View(db.Game.ToList());
+            return View(db.Game.OrderBy(e => e.Date).ToList());
         }
 
         //

@@ -35,7 +35,7 @@
                         if (playerCount == numberOfPlayers) {
                             //If we've processed all the players, we can plot the data
                             //I don't have a good way to 'update' data and replot just with new data yet
-                            ubergraph.plot();
+                            ubergraph.plot(3);
                         }
                     },
                     error: function(message) {
