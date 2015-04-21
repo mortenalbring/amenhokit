@@ -4,7 +4,7 @@ var Graph = function () {
 
     // Set the dimensions of the canvas / graph
     var margin = { top: 30, right: 200, bottom: 30, left: 50 },
-        width = 600 - margin.left - margin.right,
+        width = 800 - margin.left - margin.right,
         height = 270 - margin.top - margin.bottom;
 
     // Parse the date / time
@@ -16,7 +16,7 @@ var Graph = function () {
 
     // Define the axes
     this.xAxis = d3.svg.axis().scale(x)
-        .orient("bottom").ticks(5);
+        .orient("bottom").ticks(6);
 
     this.yAxis = d3.svg.axis().scale(y)
         .orient("left").ticks(5);
@@ -26,6 +26,7 @@ var Graph = function () {
            .append("svg")
                .attr("width", width + margin.left + margin.right)
                .attr("height", height + margin.top + margin.bottom)
+        .attr("class", "graph")
            .append("g")
                .attr("transform",
                      "translate(" + margin.left + "," + margin.top + ")");
@@ -79,9 +80,9 @@ var Graph = function () {
 
 
     this.data = [];
-    this.processData = function (rawData,player) {        
+    this.processData = function (rawData, player) {
 
-        var series = {            
+        var series = {
             Player: player,
             Data: []
 
@@ -93,7 +94,7 @@ var Graph = function () {
             var day = d.DateString.substring(0, 2);
             var month = d.DateString.substring(3, 5);
             var year = d.DateString.substring(6, 10);
-            
+
             var time = d.DateString.substring(11, 19);
 
             var newdateString = month + "/" + day + "/" + year + ' ' + time;
@@ -112,7 +113,7 @@ var Graph = function () {
     }
 
 
-    
+
 
     // Define the line
     var valueline = d3.svg.line()
@@ -128,16 +129,18 @@ var Graph = function () {
         /// </summary>
 
         var legend = this.svg.append("g")
-    .attr("class", "legend")
+
     .attr("height", 100)
     .attr("width", 100)
+            .attr("class", "legend")
     .attr("transform", 'translate(-20,50');
 
         legend.selectAll('rect')
             .data(this.data)
             .enter()
             .append("rect")
-            .attr("x", width + 50)
+            
+            .attr("x", width + 90)
             .attr("y", function (d, i) { return i * 20; })
             .attr("width", 10)
             .attr("height", 10)
@@ -149,20 +152,20 @@ var Graph = function () {
             .data(this.data)
             .enter()
             .append("text")
-            .attr("x", width + 62)
+            .attr("x", width + 105)
             .attr("y", function (d, i) { return i * 20 + 9; })
             .text(function (d) {
                 return d.Player.Name;
             });
     }
 
-  
 
-    this.plot = function () {        
+
+    this.plot = function () {
 
         // Scale the range of the data        
         var xmin = d3.min(this.data, function (d) {
-            return d3.min(d.Data, function(s) {
+            return d3.min(d.Data, function (s) {
                 return s.date;
             });
         });
@@ -173,39 +176,39 @@ var Graph = function () {
                 return s.date;
 
             });
-        });                    
-        x.domain([xmin,xmax]);
+        });
+        x.domain([xmin, xmax]).nice();
 
-        
+
         y.domain([0, d3.max(this.data, function (d) {
 
-            return d3.max(d.Data, function(s) {
+            return d3.max(d.Data, function (s) {
                 return s.totalScore;
 
-            });            
-        })]);
+            });
+        })]).nice();
 
 
         var series = this.svg.selectAll("g")
             .data(d3.map(this.data).entries())
             .enter()
             .append("g")
-            .attr("id", function(d) {
+            .attr("id", function (d) {
                 return "series-" + d.key;
-        });        
+            });
 
         series.selectAll("circle")
-            .data(function (d) {                
+            .data(function (d) {
                 return d.value.Data;
             })
             .enter()
             .append("circle")
-            .attr("cx", function(d) { return x(d.date); })
+            .attr("cx", function (d) { return x(d.date); })
             .attr("r", "5")
-            .attr("fill", function (d) {               
+            .attr("fill", function (d) {
                 return c10(d.player.ID);
             })
-            .attr("cy", function(d) { return y(d.totalScore); });
+            .attr("cy", function (d) { return y(d.totalScore); });
 
 
         // Add the X Axis
@@ -225,7 +228,7 @@ var Graph = function () {
         $('svg circle').tipsy({
             gravity: 'w',
             html: true,
-            title: function() {
+            title: function () {
                 var d = this.__data__;
                 return '<span>Player:' + d.player.Name + ' (' + d.player.ID + ')</span><br>' +
                     '<span>Date: ' + d.dateString + '</span><br>' +
