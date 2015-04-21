@@ -26,8 +26,8 @@
 
                         var scoreDataSerialised = JSON.parse(scoreData);
                         var individualGraph = new Graph();
-                        ubergraph.processData(scoreDataSerialised);
-                        individualGraph.processData(scoreDataSerialised);
+                        ubergraph.processData(scoreDataSerialised, scoreDataSerialised[0].Player);
+                        individualGraph.processData(scoreDataSerialised, scoreDataSerialised[0].Player);
                         individualGraph.plot();
                         individualGraph.addTitle(scoreDataSerialised[0].Player.Name);
 

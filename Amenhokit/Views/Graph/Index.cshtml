@@ -1,7 +1,7 @@
 ﻿@model System.Collections.Generic.List<Amenhokit.Models.ViewModel.PlayerScore>
 
 @{
-    ViewBag.Title = "title";    
+    ViewBag.Title = "title";
 }
 
 @Scripts.Render("~/bundles/d3")
@@ -24,6 +24,13 @@
         stroke: grey;
         stroke-width: 1;
         shape-rendering: crispEdges;
+    }
+
+    .legend {
+        padding: 5px;
+        font: 10px sans-serif;
+        background: yellow;
+        box-shadow: 2px 2px 1px #888;
     }
 </style>
 

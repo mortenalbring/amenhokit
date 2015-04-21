@@ -3,7 +3,7 @@ var Graph = function () {
     //Initial graph setup
 
     // Set the dimensions of the canvas / graph
-    var margin = { top: 30, right: 20, bottom: 30, left: 50 },
+    var margin = { top: 30, right: 200, bottom: 30, left: 50 },
         width = 600 - margin.left - margin.right,
         height = 270 - margin.top - margin.bottom;
 
@@ -45,12 +45,44 @@ var Graph = function () {
     }
 
 
+    var c10 = function (d) {
+        /// <summary>
+        /// Switch case for defining colors
+        /// </summary>
+        /// <param name="d">Player ID</param>
+        switch (d) {
+            case 1:
+                return "red";
+                break;
+            case 2:
+                return "GoldenRod";
+                break;
+            case 3:
+                return "purple";
+                break;
+            case 4:
+                return "metal";
+                break;
+            case 5:
+                return "green";
+                break;
+            case 6:
+                return "blue";
+                break;
+            case 7:
+                return "DodgerBlue";
+                break;
+            default:
+                return "black";
+        }
+    };
+
 
     this.data = [];
-    this.processData = function (rawData) {
+    this.processData = function (rawData,player) {        
 
-        var series = {
-            Name: 'A',
+        var series = {            
+            Player: player,
             Data: []
 
         };
@@ -74,37 +106,12 @@ var Graph = function () {
 
             series.Data.push(newDate);
         });
-        this.data.push(series);        
+        this.data.push(series);
+
+
     }
 
 
-    var c10 = function(d) {
-        switch(d) {
-            case 1:
-                return "red";
-                break;
-            case 2:
-                return "GoldenRod";
-                break;
-            case 3:
-                return "purple";
-                break;
-            case 4:
-                return "metal";
-                break;
-            case 5:
-                return "green";
-                break;
-            case 6:
-                return "blue";
-                break;
-            case 7:
-                return "DodgerBlue";
-                break;
-                default:
-                    return "black";
-        }           
-    };
     
 
     // Define the line
@@ -115,6 +122,39 @@ var Graph = function () {
 
 
 
+    this.addLegend = function () {
+        /// <summary>
+        /// Adds a legend displaying colored squared and series name
+        /// </summary>
+
+        var legend = this.svg.append("g")
+    .attr("class", "legend")
+    .attr("height", 100)
+    .attr("width", 100)
+    .attr("transform", 'translate(-20,50');
+
+        legend.selectAll('rect')
+            .data(this.data)
+            .enter()
+            .append("rect")
+            .attr("x", width + 50)
+            .attr("y", function (d, i) { return i * 20; })
+            .attr("width", 10)
+            .attr("height", 10)
+            .style("fill", function (d) {
+                return c10(d.Player.ID);
+            });
+
+        legend.selectAll('text')
+            .data(this.data)
+            .enter()
+            .append("text")
+            .attr("x", width + 62)
+            .attr("y", function (d, i) { return i * 20 + 9; })
+            .text(function (d) {
+                return d.Player.Name;
+            });
+    }
 
   
 
@@ -179,6 +219,8 @@ var Graph = function () {
             .attr("class", "y axis")
             .call(this.yAxis);
 
+
+
         // Adds the hoverover text
         $('svg circle').tipsy({
             gravity: 'w',
@@ -190,8 +232,9 @@ var Graph = function () {
                     '<br><span>Score:' + d.totalScore + '</span><br>' +
                     '<span>Game ID:' + d.gameID + '</span>';
             }
-
         });
+
+        this.addLegend();
     }
 }
 
