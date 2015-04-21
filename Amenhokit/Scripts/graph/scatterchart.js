@@ -21,6 +21,7 @@ var Graph = function () {
     this.yAxis = d3.svg.axis().scale(y)
         .orient("left").ticks(5);
 
+    // Draws the actual graph body
     this.svg = d3.select(".content")
            .append("svg")
                .attr("width", width + margin.left + margin.right)
@@ -30,6 +31,10 @@ var Graph = function () {
                      "translate(" + margin.left + "," + margin.top + ")");
 
     this.addTitle = function (title) {
+        /// <summary>
+        /// Adds a title to the graph
+        /// </summary>
+        /// <param name="title">Title text</param>
         this.svg.append("text")
         .attr("x", (width / 2))
         .attr("y", 0 - (margin.top / 2))
@@ -37,15 +42,11 @@ var Graph = function () {
         .style("font-size", "16px")
         .style("text-decoration", "underline")
         .text(title);
-
-
     }
 
 
 
-
     this.data = [];
-
     this.processData = function (rawData) {
 
         var series = {
@@ -102,11 +103,7 @@ var Graph = function () {
                 break;
                 default:
                     return "black";
-
-
-        }
-    
-        
+        }           
     };
     
 
@@ -154,7 +151,6 @@ var Graph = function () {
             .enter()
             .append("g")
             .attr("id", function(d) {
-
                 return "series-" + d.key;
         });        
 
@@ -166,15 +162,7 @@ var Graph = function () {
             .append("circle")
             .attr("cx", function(d) { return x(d.date); })
             .attr("r", "5")
-            .attr("fill", function (d) {
-
-                
-
-                if (d.player.ID == 1) {
-                    var whatwhat = c10(d.player.ID);
-                } else {
-                    var blarg = c10(d.player.ID);
-                }
+            .attr("fill", function (d) {               
                 return c10(d.player.ID);
             })
             .attr("cy", function(d) { return y(d.totalScore); });
@@ -191,6 +179,7 @@ var Graph = function () {
             .attr("class", "y axis")
             .call(this.yAxis);
 
+        // Adds the hoverover text
         $('svg circle').tipsy({
             gravity: 'w',
             html: true,
@@ -206,65 +195,5 @@ var Graph = function () {
     }
 }
 
-var ubergraph;
 
 
-$(function () {
-
-    $('#plotstuff').click(function () {
-
-        var xx = 42;
-        ubergraph.plot();
-    });
-
-
-    $.ajax({
-        url: "/Graph/GetPlayers/",
-        success: function(data) {
-            var deserialisedData = JSON.parse(data);
-
-            var xx = 42;
-
-
-            ubergraph = new Graph();
-
-
-            deserialisedData.forEach(function(d) {
-                $.ajax({
-                    url: "/Graph/PlayerScoreData/" + d.ID,
-                    success: function (data) {
-
-
-                        var deserialisedData = JSON.parse(data);                        
-
-                        var graph2 = new Graph();
-
-                        ubergraph.processData(deserialisedData);
-                        
-                        ubergraph.addTitle(deserialisedData[0].Player.Name);
-
-
-                        graph2.processData(deserialisedData);
-                        graph2.plot();
-
-                        graph2.addTitle(deserialisedData[0].Player.Name);
-
-
-                    },
-                    error: function (what) {
-                        var xxx = 42;
-                    }
-                });
-
-            })
-
-        
-
-
-        }
-
-    });
-
- 
-
-});
