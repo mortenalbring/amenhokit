@@ -9,10 +9,12 @@ var Graph = function () {
 
     // Parse the date / time
     var parseDate = d3.time.format("%x %X").parse;
+    var decimalFormat = d3.format("0.3f");
 
     // Set the ranges
     var x = d3.time.scale().range([0, width]);
     var y = d3.scale.linear().range([height, 0]);
+
 
     // Define the axes
     this.xAxis = d3.svg.axis().scale(x)
@@ -150,8 +152,8 @@ var Graph = function () {
             .enter()
             .append("rect")
 
-            .attr("x", width + 60)
-            .attr("y", function (d, i) { return i * 20; })
+            .attr("x", width + 30)
+            .attr("y", function (d, i) { return i * 22; })
             .attr("width", 10)
             .attr("height", 10)
             .style("fill", function (d) {
@@ -162,8 +164,8 @@ var Graph = function () {
             .data(this.data)
             .enter()
             .append("text")
-            .attr("x", width + 75)
-            .attr("y", function (d, i) { return i * 20 + 9; })
+            .attr("x", width + 45)
+            .attr("y", function (d, i) { return i * 22 + 9; })
             .text(function (d) {
                 return d.Player.Name;
             });
@@ -200,7 +202,8 @@ var Graph = function () {
             var seriesTrend =
             {
                 Player: series.Player,
-                TrendData: [[x1,y1,x2,y2,series.Player.ID]]
+                TrendData: [[x1, y1, x2, y2, series.Player.ID]],
+                rSquare: ls[2]
             }
             trendData.push(seriesTrend);
 
@@ -211,7 +214,11 @@ var Graph = function () {
 
 
     this.drawTrendline = function(graphsvg,data) {
-
+        /// <summary>
+        /// This draws a trendline on the current graph
+        /// </summary>
+        /// <param name="graphsvg">Graph on which to draw</param>
+        /// <param name="data">Dataset from which to calculate trendline</param>
         var trendData = this.getTrendData(data);
 
         var trendlines = graphsvg.selectAll(".trendlines")
@@ -221,7 +228,15 @@ var Graph = function () {
             .attr("class", "trendlines")
             .attr("id", function (d) {
                 return d.key;
-            });
+            })
+        ;
+
+        trendlines.append("text")
+            .attr("class", "legend")
+            .text(function (d) { return "r: " + decimalFormat(d.value.rSquare); })
+            .attr("x", width + 95)
+            .attr("y", function(d, i) { return i * 22 + 9; });
+
 
 
         trendlines.selectAll(".trendline")
