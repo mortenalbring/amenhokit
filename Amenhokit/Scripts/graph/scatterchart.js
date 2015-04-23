@@ -1,11 +1,13 @@
 ﻿
-var Graph = function () {
+var Graph = function (width,height) {
     //Initial graph setup
 
     // Set the dimensions of the canvas / graph
-    var margin = { top: 30, right: 150, bottom: 30, left: 50 },
-        width = 800 - margin.left - margin.right,
-        height = 270 - margin.top - margin.bottom;
+    var margin = { top: 30, right: 150, bottom: 30, left: 50 };
+
+
+        width = width - margin.left - margin.right,
+        height = height - margin.top - margin.bottom;
 
     // Parse the date / time
     var parseDate = d3.time.format("%x %X").parse;
