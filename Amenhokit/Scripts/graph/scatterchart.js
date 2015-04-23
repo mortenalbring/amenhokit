@@ -210,10 +210,53 @@ var Graph = function () {
     }
 
 
+    this.drawTrendline = function(graphsvg,data) {
+
+        var trendData = this.getTrendData(data);
+
+        var trendlines = graphsvg.selectAll(".trendlines")
+            .data(d3.map(trendData).entries())
+            .enter()
+            .append("g")
+            .attr("class", "trendlines")
+            .attr("id", function (d) {
+                return d.key;
+            });
+
+
+        trendlines.selectAll(".trendline")
+            .data(function (d) {
+                return d.value.TrendData;
+            })
+            .enter()
+            .append("line")
+            .attr("class", "trendline")
+            .attr("x1", function (d) {
+                return x(d[0]);
+            })
+            .attr("y1", function (d) {
+
+                return y(d[1]);
+            })
+            .attr("x2", function (d) {
+
+                return x(d[2]);
+            })
+            .attr("y2", function (d) {
+
+                return y(d[3]);
+            })
+        .attr("stroke", function (d) {
+            return c10(d[4]);
+        })
+        .attr("stroke-width", 1);
+
+    }
 
     this.plot = function (circleSize) {
 
-        
+        var thisData = this.data;
+        var thisGraph = this.svg;
         
         if (circleSize == null) {
             circleSize = 4;
@@ -312,47 +355,8 @@ var Graph = function () {
 
         this.addLegend();
 
+        this.drawTrendline(thisGraph, thisData);
 
-
-
-        var trendData = this.getTrendData(this.data);
-
-        var trendlines = this.svg.selectAll(".trendlines")
-            .data(d3.map(trendData).entries())
-            .enter()
-            .append("g")
-            .attr("class", "trendlines")
-            .attr("id", function (d) {
-                return d.key;
-            });
-
-
-        trendlines.selectAll(".trendline")
-            .data(function (d) {
-                return d.value.TrendData;
-            })
-            .enter()
-            .append("line")
-            .attr("class", "trendline")
-            .attr("x1", function (d) {
-                return x(d[0]);
-            })
-            .attr("y1", function (d) {
-
-                return y(d[1]);
-            })
-            .attr("x2", function (d) {
-
-                return x(d[2]);
-            })
-            .attr("y2", function (d) {
-
-                return y(d[3]);
-            })
-        .attr("stroke", function(d) {
-                return c10(d[4]);                
-            })
-        .attr("stroke-width", 1);
 
     }
 }
