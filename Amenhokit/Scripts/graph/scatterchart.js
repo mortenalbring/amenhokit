@@ -66,7 +66,7 @@ var Graph = function () {
                 return "purple";
                 break;
             case 4:
-                return "metal";
+                return "grey";
                 break;
             case 5:
                 return "green";
@@ -170,8 +170,40 @@ var Graph = function () {
     }
 
 
+    this.getTrendData = function(data) {
+
+        var trendData = [];
+
+        $.each(data, function(index,series) {
+            
+
+            var sData = series.Data;
+
+            var xSeries = d3.range(1, sData.length + 1);
+            var ySeries = sData.map(function(d) {    
+                return d.totalScore;
+            });
+
+
+            var ls = leastSquares(xSeries, ySeries);
+
+            var seriestrend =
+            {
+                Player: series.Player,
+                TrendData: ls
+            }
+            trendData.push(seriestrend);
+
+        });
+    }
+
+
 
     this.plot = function (circleSize) {
+
+        var trendData = this.getTrendData(this.data);
+        
+
 
         if (circleSize == null) {
             circleSize = 4;
@@ -232,12 +264,9 @@ var Graph = function () {
           .attr("d", function (d) {
               return valueline(d.value.Data);
           })
-            .attr("stroke", function (d) {
-                var xx = 42;
+            .attr("stroke", function (d) {                
                       return c10(d.value.Player.ID);
-
-                  })
-        ;
+                  });
 
 
 
@@ -270,6 +299,30 @@ var Graph = function () {
         this.addLegend();
     }
 }
+
+// returns slope, intercept and r-square of the line
+function leastSquares(xSeries, ySeries) {
+    var reduceSumFunc = function (prev, cur) { return prev + cur; };
+
+    var xBar = xSeries.reduce(reduceSumFunc) * 1.0 / xSeries.length;
+    var yBar = ySeries.reduce(reduceSumFunc) * 1.0 / ySeries.length;
+
+    var ssXX = xSeries.map(function (d) { return Math.pow(d - xBar, 2); })
+        .reduce(reduceSumFunc);
+
+    var ssYY = ySeries.map(function (d) { return Math.pow(d - yBar, 2); })
+        .reduce(reduceSumFunc);
+
+    var ssXY = xSeries.map(function (d, i) { return (d - xBar) * (ySeries[i] - yBar); })
+        .reduce(reduceSumFunc);
+
+    var slope = ssXY / ssXX;
+    var intercept = yBar - (xBar * slope);
+    var rSquare = Math.pow(ssXY, 2) / (ssXX * ssYY);
+
+    return [slope, intercept, rSquare];
+}
+
 
 
 
