@@ -183,7 +183,6 @@ var Graph = function () {
                 return s.date;
             });
         });
-
         var xmax = d3.max(this.data, function (d) {
             return d3.max(d.Data, function (s) {
 
@@ -192,8 +191,6 @@ var Graph = function () {
             });
         });
         x.domain([xmin, xmax]).nice();
-
-
         y.domain([0, d3.max(this.data, function (d) {
 
             return d3.max(d.Data, function (s) {
@@ -201,6 +198,7 @@ var Graph = function () {
 
             });
         })]).nice();
+
 
 
         var series = this.svg.selectAll("g")
@@ -223,6 +221,24 @@ var Graph = function () {
                 return c10(d.player.ID);
             })
             .attr("cy", function (d) { return y(d.totalScore); });
+
+
+
+        var lines = this.svg.selectAll("path")
+            .data(d3.map(this.data).entries())
+            .enter()
+          .append("path")
+          .attr("class", "line")
+          .attr("d", function (d) {
+              return valueline(d.value.Data);
+          })
+            .attr("stroke", function (d) {
+                var xx = 42;
+                      return c10(d.value.Player.ID);
+
+                  })
+        ;
+
 
 
         // Add the X Axis
