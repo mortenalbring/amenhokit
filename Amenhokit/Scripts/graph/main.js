@@ -12,7 +12,7 @@
             var players = JSON.parse(data);            
 
 
-            ubergraph = new Graph();
+            ubergraph = new Graph(1000, 600);
             ubergraph.addTitle("All Players");
 
             var numberOfPlayers = players.length;
@@ -25,7 +25,7 @@
                         
 
                         var scoreDataSerialised = JSON.parse(scoreData);
-                        var individualGraph = new Graph();
+                        var individualGraph = new Graph(800,270);
                         ubergraph.processData(scoreDataSerialised, scoreDataSerialised[0].Player);
                         individualGraph.processData(scoreDataSerialised, scoreDataSerialised[0].Player);
                         individualGraph.plot();
@@ -35,7 +35,7 @@
                         if (playerCount == numberOfPlayers) {
                             //If we've processed all the players, we can plot the data
                             //I don't have a good way to 'update' data and replot just with new data yet
-                            ubergraph.plot(3);
+                            ubergraph.plot(4);
                         }
                     },
                     error: function(message) {
