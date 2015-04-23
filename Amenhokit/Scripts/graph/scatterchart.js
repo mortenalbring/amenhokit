@@ -187,24 +187,34 @@ var Graph = function () {
 
             var ls = leastSquares(xSeries, ySeries);
 
-            var seriestrend =
+            var x1 = d3.min(sData, function(d) {
+                return d.date;
+            });
+            var x2 = d3.max(sData, function (d) {
+                return d.date;
+            });
+            var y1 = ls[0] + ls[1];
+            var y2 = ls[0] * xSeries.length + ls[1];
+
+
+            var seriesTrend =
             {
                 Player: series.Player,
-                TrendData: ls
+                TrendData: [[x1,y1,x2,y2,series.Player.ID]]
             }
-            trendData.push(seriestrend);
+            trendData.push(seriesTrend);
 
         });
+
+        return trendData;
     }
 
 
 
     this.plot = function (circleSize) {
 
-        var trendData = this.getTrendData(this.data);
         
-
-
+        
         if (circleSize == null) {
             circleSize = 4;
         }
@@ -247,7 +257,11 @@ var Graph = function () {
             })
             .enter()
             .append("circle")
-            .attr("cx", function (d) { return x(d.date); })
+            .attr("cx", function(d) {
+                var wwhatwhat = x(d.date);
+
+                return x(d.date);
+            })
             .attr("r", circleSize)
             .attr("fill", function (d) {
                 return c10(d.player.ID);
@@ -255,7 +269,7 @@ var Graph = function () {
             .attr("cy", function (d) { return y(d.totalScore); });
 
 
-
+        /*
         var lines = this.svg.selectAll("path")
             .data(d3.map(this.data).entries())
             .enter()
@@ -267,7 +281,7 @@ var Graph = function () {
             .attr("stroke", function (d) {                
                       return c10(d.value.Player.ID);
                   });
-
+                  */
 
 
         // Add the X Axis
@@ -297,6 +311,49 @@ var Graph = function () {
         });
 
         this.addLegend();
+
+
+
+
+        var trendData = this.getTrendData(this.data);
+
+        var trendlines = this.svg.selectAll(".trendlines")
+            .data(d3.map(trendData).entries())
+            .enter()
+            .append("g")
+            .attr("class", "trendlines")
+            .attr("id", function (d) {
+                return d.key;
+            });
+
+
+        trendlines.selectAll(".trendline")
+            .data(function (d) {
+                return d.value.TrendData;
+            })
+            .enter()
+            .append("line")
+            .attr("class", "trendline")
+            .attr("x1", function (d) {
+                return x(d[0]);
+            })
+            .attr("y1", function (d) {
+
+                return y(d[1]);
+            })
+            .attr("x2", function (d) {
+
+                return x(d[2]);
+            })
+            .attr("y2", function (d) {
+
+                return y(d[3]);
+            })
+        .attr("stroke", function(d) {
+                return c10(d[4]);                
+            })
+        .attr("stroke-width", 1);
+
     }
 }
 
