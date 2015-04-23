@@ -1,30 +1,32 @@
 ﻿
-var Graph = function (width,height) {
-    //Initial graph setup
+var Graph = function (width, height) {
+    /// <summary>
+    /// Initialises a scatter graph with a timescale on the x axis
+    /// </summary>
+    /// <param name="width">Graph width</param>
+    /// <param name="height">Graph height</param>    
 
     // Set the dimensions of the canvas / graph
     var margin = { top: 30, right: 150, bottom: 30, left: 50 };
-
-
-        width = width - margin.left - margin.right,
-        height = height - margin.top - margin.bottom;
+    width = width - margin.left - margin.right,
+    height = height - margin.top - margin.bottom;
 
     // Parse the date / time
     var parseDate = d3.time.format("%x %X").parse;
     var decimalFormat = d3.format("0.3f");
 
-    // Set the ranges
+    // Set the ranges for x and y
     var x = d3.time.scale().range([0, width]);
     var y = d3.scale.linear().range([height, 0]);
 
 
     // Define the axes
-    this.xAxis = d3.svg.axis().scale(x)
-        .orient("bottom").ticks(5);
-
-    //For the 'All Players' graph, it makes sense to use 
+    //For the 'All Players' graph, it makes sense to use on the x-axis
     //.ticks(d3.time.week,2)
     //But not for all of the individual graphs Using automatic tick generator for now. 
+
+    this.xAxis = d3.svg.axis().scale(x)
+        .orient("bottom").ticks(5);
 
     this.yAxis = d3.svg.axis().scale(y)
         .orient("left").ticks(5);
@@ -174,24 +176,25 @@ var Graph = function (width,height) {
     }
 
 
-    this.getTrendData = function(data) {
+    this.getTrendData = function (data) {
+        /// <summary>
+        /// This takes the raw data and calculates the parameters for the trend line for each series
+        /// </summary>
+        /// <param name="data">Series data</param>
 
         var trendData = [];
-
-        $.each(data, function(index,series) {
-            
-
+        $.each(data, function (index, series) {
             var sData = series.Data;
 
             var xSeries = d3.range(1, sData.length + 1);
-            var ySeries = sData.map(function(d) {    
+            var ySeries = sData.map(function (d) {
                 return d.totalScore;
             });
 
 
             var ls = leastSquares(xSeries, ySeries);
 
-            var x1 = d3.min(sData, function(d) {
+            var x1 = d3.min(sData, function (d) {
                 return d.date;
             });
             var x2 = d3.max(sData, function (d) {
@@ -215,7 +218,7 @@ var Graph = function (width,height) {
     }
 
 
-    this.drawTrendline = function(graphsvg,data) {
+    this.drawTrendline = function (graphsvg, data) {
         /// <summary>
         /// This draws a trendline on the current graph
         /// </summary>
@@ -237,7 +240,7 @@ var Graph = function (width,height) {
             .attr("class", "legend")
             .text(function (d) { return "r: " + decimalFormat(d.value.rSquare); })
             .attr("x", width + 95)
-            .attr("y", function(d, i) { return i * 22 + 9; });
+            .attr("y", function (d, i) { return i * 22 + 9; });
 
 
 
@@ -271,10 +274,14 @@ var Graph = function (width,height) {
     }
 
     this.plot = function (circleSize) {
+        /// <summary>
+        /// Plots the graph, with specified circle size
+        /// </summary>
+        /// <param name="circleSize">Circle size</param>
 
         var thisData = this.data;
         var thisGraph = this.svg;
-        
+
         if (circleSize == null) {
             circleSize = 4;
         }
@@ -307,25 +314,15 @@ var Graph = function (width,height) {
             .data(d3.map(this.data).entries())
             .enter()
             .append("g")
-            .attr("id", function (d) {
-                return "series-" + d.key;
-            });
+            .attr("id", function (d) { return "series-" + d.key; });
 
         series.selectAll("circle")
-            .data(function (d) {
-                return d.value.Data;
-            })
+            .data(function (d) {return d.value.Data; })
             .enter()
             .append("circle")
-            .attr("cx", function(d) {
-                var wwhatwhat = x(d.date);
-
-                return x(d.date);
-            })
+            .attr("cx", function (d) { return x(d.date);})
             .attr("r", circleSize)
-            .attr("fill", function (d) {
-                return c10(d.player.ID);
-            })
+            .attr("fill", function (d) { return c10(d.player.ID);})
             .attr("cy", function (d) { return y(d.totalScore); });
 
 
@@ -378,8 +375,13 @@ var Graph = function (width,height) {
     }
 }
 
-// returns slope, intercept and r-square of the line
 function leastSquares(xSeries, ySeries) {
+    /// <summary>
+    /// Takes the x series and y series data and calculates the least squares coeffients of that data
+    /// It outputs an array with slope, intercept and r-square of the line
+    /// </summary>
+    /// <param name="xSeries">X series</param>
+    /// <param name="ySeries">Y series</param>
     var reduceSumFunc = function (prev, cur) { return prev + cur; };
 
     var xBar = xSeries.reduce(reduceSumFunc) * 1.0 / xSeries.length;
