@@ -184,10 +184,6 @@ var Graph = function (width, height) {
             var sData = series.Data;
             var sPlayer = series.Player;
 
-            //var xSeries = d3.range(1, sData.length + 1);
-
-            var xSeries = [];
-            var ySeries = [];
             var dataRowSeries = [];
             var gameIDs = [];
 
@@ -223,16 +219,12 @@ var Graph = function (width, height) {
                 dataRow.playerID = sPlayer.ID;
 
                 dataRowSeries.push(dataRow);
-
-                ySeries.push(average);
-                xSeries.push(date);
             });
 
 
 
             var seriesTrend = {
-                Player: series.Player,
-                Data: [[xSeries, ySeries]],
+                Player: series.Player,                
                 DataRowSeries: [dataRowSeries]
             }
 
