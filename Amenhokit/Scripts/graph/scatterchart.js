@@ -176,26 +176,30 @@ var Graph = function (width, height) {
     }
 
 
-    this.getAverageData = function(data) {
+    this.getAverageData = function (data) {
+        /// <summary>
+        /// Processes the series data to calculate the average score for each game
+        /// </summary>
+        /// <param name="data">Data series to process</param>
 
         var lineData = [];
 
-        $.each(data, function(index, series) {
+        $.each(data, function (index, series) {
             var sData = series.Data;
             var sPlayer = series.Player;
 
             var dataRowSeries = [];
             var gameIDs = [];
 
-            //Get array of distinct game IDs
-            $.each(sData, function(i, s) {
-                if (jQuery.inArray(s.gameID, gameIDs) == -1) {                                    
+            //First get the array of distinct game IDs
+            $.each(sData, function (i, s) {
+                if (jQuery.inArray(s.gameID, gameIDs) == -1) {
                     gameIDs.push(s.gameID);
-                }                             
+                }
             });
 
-            
-           
+
+            //Then we go through each game ID and then calculate the average score across all the games with that ID
             $.each(gameIDs, function (i, g) {
                 var total = 0;
                 var count = 0;
@@ -203,9 +207,12 @@ var Graph = function (width, height) {
 
                 var dataRow = {};
 
-                $.each(sData, function(ii, s) {
+                var s_scores = [];
+
+                $.each(sData, function (ii, s) {
 
                     if (g == s.gameID) {
+                        s_scores.push(s.totalScore);
                         total = total + s.totalScore;
                         count = count + 1;
                         date = s.date;
@@ -214,7 +221,17 @@ var Graph = function (width, height) {
 
                 var average = total / count;
 
+                //Calculate variance
+                var sigma = 0;
+                $.each(s_scores, function (i, s) {
+                    var v = Math.pow((s - average), 2);
+                    sigma = sigma + v;
+                });
+                sigma = Math.sqrt(sigma);
+
+
                 dataRow.date = date;
+                dataRow.sigma = sigma;
                 dataRow.average = average;
                 dataRow.playerID = sPlayer.ID;
 
@@ -224,7 +241,7 @@ var Graph = function (width, height) {
 
 
             var seriesTrend = {
-                Player: series.Player,                
+                Player: series.Player,
                 DataRowSeries: [dataRowSeries]
             }
 
@@ -236,7 +253,12 @@ var Graph = function (width, height) {
 
     }
 
-    this.drawAverageLine = function(graphsvg, data) {
+    this.drawAverageLine = function (graphsvg, data) {
+        /// <summary>
+        /// Draws a line that represents the average score for that evenings' games
+        /// </summary>
+        /// <param name="graphsvg">Graph on which to draw</param>
+        /// <param name="data">Data to process</param>
 
         var lineData = this.getAverageData(data);
 
@@ -245,12 +267,12 @@ var Graph = function (width, height) {
             .enter()
             .append("g")
             .attr("class", "averageLines")
-            .attr("id", function(d) {
+            .attr("id", function (d) {
                 return d.key;
             });
 
         var lineFunction = d3.svg.line()
-            .x(function(d) { return x(d.date); })
+            .x(function (d) { return x(d.date); })
             .y(function (d) { return y(d.average); })
         .interpolate("basis");
 
@@ -259,11 +281,12 @@ var Graph = function (width, height) {
             .enter()
             .append("path")
             .attr("d", function (d) { return lineFunction(d); })
-        .attr("stroke", function(d) {
-                return c10(d[0].playerID);
-            })
-        .attr("stroke-width", 2)
-        .attr("fill", "none");       
+        .attr("stroke", function (d) {
+            return c10(d[0].playerID);
+        })
+        .attr("stroke-width")
+            .style("stroke-opacity", 0.6)
+        .attr("fill", "none");
     }
 
 
@@ -307,11 +330,9 @@ var Graph = function (width, height) {
 
         return trendData;
     }
-
-
     this.drawTrendline = function (graphsvg, data) {
         /// <summary>
-        /// This draws a trendline on the current graph
+        /// This draws a linear trendline on the current graph
         /// </summary>
         /// <param name="graphsvg">Graph on which to draw</param>
         /// <param name="data">Dataset from which to calculate trendline</param>
@@ -358,7 +379,49 @@ var Graph = function (width, height) {
         .attr("stroke", function (d) {
             return c10(d[4]);
         })
-        .attr("stroke-width", 1);
+        .attr("stroke-width", 1)
+        .style("stroke-opacity", 0.8)
+        ;
+
+    }
+
+
+    this.drawCircles = function (graphsvg, data, circleSize) {
+        /// <summary>
+        /// Plots the data points as a scatter graph
+        /// </summary>
+        /// <param name="graphsvg">Graph on which to plot</param>
+        /// <param name="data">Data series to plot</param>
+        /// <param name="circleSize">Size of circles</param>
+        var series = graphsvg.selectAll("g")
+            .data(d3.map(data).entries())
+            .enter()
+            .append("g")
+            .attr("id", function (d) { return "series-" + d.key; });
+
+        series.selectAll("circle")
+            .data(function (d) { return d.value.Data; })
+            .enter()
+            .append("circle")
+            .attr("cx", function (d) { return x(d.date); })
+            .attr("r", circleSize)
+            .attr("fill", function (d) { return c10(d.player.ID); })
+            .attr("cy", function (d) { return y(d.totalScore); });
+
+
+        // Adds the hoverover text
+        $('svg circle').tipsy({
+            gravity: 'w',
+            html: true,
+            title: function () {
+                var d = this.__data__;
+                return '<table border=1>' +
+                    '<tr><td colspan=2>' + d.dateString + '</td></tr>' +
+                    '<tr><td>Player</td><td>' + d.player.Name + '</td></tr>' +
+                    '<tr><td>Score</td><td>' + d.totalScore + '</td></tr>' +
+                    '</table>';
+            }
+        });
 
     }
 
@@ -399,36 +462,7 @@ var Graph = function (width, height) {
 
 
 
-        var series = this.svg.selectAll("g")
-            .data(d3.map(this.data).entries())
-            .enter()
-            .append("g")
-            .attr("id", function (d) { return "series-" + d.key; });
-
-        series.selectAll("circle")
-            .data(function (d) {return d.value.Data; })
-            .enter()
-            .append("circle")
-            .attr("cx", function (d) { return x(d.date);})
-            .attr("r", circleSize)
-            .attr("fill", function (d) { return c10(d.player.ID);})
-            .attr("cy", function (d) { return y(d.totalScore); });
-
-
-        /*
-        var lines = this.svg.selectAll("path")
-            .data(d3.map(this.data).entries())
-            .enter()
-          .append("path")
-          .attr("class", "line")
-          .attr("d", function (d) {
-              return valueline(d.value.Data);
-          })
-            .attr("stroke", function (d) {                
-                      return c10(d.value.Player.ID);
-                  });
-                  */
-
+        this.drawCircles(thisGraph, thisData, circleSize);
 
         // Add the X Axis
         this.svg.append("g")
@@ -443,18 +477,6 @@ var Graph = function (width, height) {
 
 
 
-        // Adds the hoverover text
-        $('svg circle').tipsy({
-            gravity: 'w',
-            html: true,
-            title: function () {
-                var d = this.__data__;
-                return '<span>Player:' + d.player.Name + ' (' + d.player.ID + ')</span><br>' +
-                    '<span>Date: ' + d.dateString + '</span><br>' +
-                    '<br><span>Score:' + d.totalScore + '</span><br>' +
-                    '<span>Game ID:' + d.gameID + '</span>';
-            }
-        });
 
         this.addLegend();
 
