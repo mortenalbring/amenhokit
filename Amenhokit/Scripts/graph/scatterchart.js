@@ -176,6 +176,105 @@ var Graph = function (width, height) {
     }
 
 
+    this.getAverageData = function(data) {
+
+        var lineData = [];
+
+        $.each(data, function(index, series) {
+            var sData = series.Data;
+            var sPlayer = series.Player;
+
+            //var xSeries = d3.range(1, sData.length + 1);
+
+            var xSeries = [];
+            var ySeries = [];
+            var dataRowSeries = [];
+            var gameIDs = [];
+
+            //Get array of distinct game IDs
+            $.each(sData, function(i, s) {
+                if (jQuery.inArray(s.gameID, gameIDs) == -1) {                                    
+                    gameIDs.push(s.gameID);
+                }                             
+            });
+
+            
+           
+            $.each(gameIDs, function (i, g) {
+                var total = 0;
+                var count = 0;
+                var date;
+
+                var dataRow = {};
+
+                $.each(sData, function(ii, s) {
+
+                    if (g == s.gameID) {
+                        total = total + s.totalScore;
+                        count = count + 1;
+                        date = s.date;
+                    }
+                });
+
+                var average = total / count;
+
+                dataRow.date = date;
+                dataRow.average = average;
+                dataRow.playerID = sPlayer.ID;
+
+                dataRowSeries.push(dataRow);
+
+                ySeries.push(average);
+                xSeries.push(date);
+            });
+
+
+
+            var seriesTrend = {
+                Player: series.Player,
+                Data: [[xSeries, ySeries]],
+                DataRowSeries: [dataRowSeries]
+            }
+
+            lineData.push(seriesTrend);
+        });
+
+        return lineData;
+
+
+    }
+
+    this.drawAverageLine = function(graphsvg, data) {
+
+        var lineData = this.getAverageData(data);
+
+        var averageLines = graphsvg.selectAll(".averageLines")
+            .data(d3.map(lineData).entries())
+            .enter()
+            .append("g")
+            .attr("class", "averageLines")
+            .attr("id", function(d) {
+                return d.key;
+            });
+
+        var lineFunction = d3.svg.line()
+            .x(function(d) { return x(d.date); })
+            .y(function (d) { return y(d.average); })
+        .interpolate("basis");
+
+        averageLines.selectAll(".averageLine")
+            .data(function (d) { return d.value.DataRowSeries; })
+            .enter()
+            .append("path")
+            .attr("d", function (d) { return lineFunction(d); })
+        .attr("stroke", function(d) {
+                return c10(d[0].playerID);
+            })
+        .attr("stroke-width", 2)
+        .attr("fill", "none");       
+    }
+
+
     this.getTrendData = function (data) {
         /// <summary>
         /// This takes the raw data and calculates the parameters for the trend line for each series
@@ -245,9 +344,7 @@ var Graph = function (width, height) {
 
 
         trendlines.selectAll(".trendline")
-            .data(function (d) {
-                return d.value.TrendData;
-            })
+            .data(function (d) { return d.value.TrendData; })
             .enter()
             .append("line")
             .attr("class", "trendline")
@@ -371,7 +468,7 @@ var Graph = function (width, height) {
 
         this.drawTrendline(thisGraph, thisData);
 
-
+        this.drawAverageLine(thisGraph, thisData);
     }
 }
 
