@@ -284,7 +284,7 @@ var Graph = function (width, height) {
         .attr("stroke", function (d) {
             return c10(d[0].playerID);
         })
-        .attr("stroke-width")
+        .attr("stroke-width",1)
             .style("stroke-opacity", 0.6)
         .attr("fill", "none");
     }
